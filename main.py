@@ -29,6 +29,24 @@ def retornaTodosResultados():
         mimetype='application/json'
     )
     return response
+
+@app.route('/montarGrafico', methods=['GET'])
+def montarGraficoLimiteDatas():
+    cidade = request.args.get('cidade')
+    praia = request.args.get('praia')
+    inicio = request.args.get('inicio')
+    fim = request.args.get('fim')
+ 
+    dataFrameCsv = pandas.read_csv('sp_beaches_update.csv')
+    dataFrameCsv = dataFrameCsv[(dataFrameCsv["City"] == cidade.upper()) & (dataFrameCsv["Beach"] == praia.upper()) & (dataFrameCsv["Date"] >= inicio) & (dataFrameCsv["Date"] <= fim)]
+
+    conversaoEmLista = dataFrameCsv[['Date','Enterococcus']].to_numpy().tolist()
+    response = app.response_class(
+        response=json.dumps(conversaoEmLista),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
  
 @app.route('/previsaoProximasSemanas', methods=['GET'])
 def preveProximasSemanas():
