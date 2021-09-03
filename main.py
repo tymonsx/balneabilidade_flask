@@ -30,6 +30,22 @@ def retornaTodosResultados():
     )
     return response
 
+@app.route('/historicoMedicoes', methods=['GET'])
+def montarTabelaHistorico():
+    cidade = request.args.get('cidade')
+    praia = request.args.get('praia')
+ 
+    dataFrameCsv = pandas.read_csv('sp_beaches_update.csv')
+    dataFrameCsv = dataFrameCsv[(dataFrameCsv["City"] == cidade.upper()) & (dataFrameCsv["Beach"] == praia.upper())].tail(10)
+ 
+    conversaoEmLista = dataFrameCsv[['Date','Enterococcus']].to_numpy().tolist()
+    response = app.response_class(
+        response=json.dumps(conversaoEmLista),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
 @app.route('/montarGrafico', methods=['GET'])
 def montarGraficoLimiteDatas():
     cidade = request.args.get('cidade')
